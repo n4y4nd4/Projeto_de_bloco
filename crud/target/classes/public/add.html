@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Adicionar Produto</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Adicionar Novo Produto</h1>
+        <a href="/index.html" class="btn btn-primary">Voltar para Listagem</a>
+        
+        <div id="alert-message" class="alert alert-danger" style="display:none;"></div>
+
+        <form id="add-form">
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" name="nome" required>
+
+            <label for="preco">Preço:</label>
+            <input type="number" id="preco" name="preco" step="0.01" min="0.01" required>
+
+            <label for="estoque">Estoque:</label>
+            <input type="number" id="estoque" name="estoque" min="0" required>
+
+            <button type="submit" class="btn btn-success" id="save-btn">Salvar Produto</button>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('add-form');
+        const alertDiv = document.getElementById('alert-message');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            alertDiv.style.display = 'none';
+
+            const produto = {
+                nome: document.getElementById('nome').value,
+                preco: parseFloat(document.getElementById('preco').value),
+                estoque: parseInt(document.getElementById('estoque').value, 10)
+            };
+
+            const response = await fetch('/api/produtos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(produto)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                // Sucesso: Redireciona para listagem com mensagem
+                window.location.href = `/index.html?msg=${encodeURIComponent('Produto "' + result.nome + '" adicionado com sucesso.')}&type=success`;
+            } else {
+                // Falha: Exibe erro de validação
+                alertDiv.textContent = result.message || 'Erro desconhecido ao cadastrar.';
+                alertDiv.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

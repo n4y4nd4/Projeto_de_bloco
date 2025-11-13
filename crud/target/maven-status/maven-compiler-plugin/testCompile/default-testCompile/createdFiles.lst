@@ -1,0 +1,7 @@
+crud\pages\ProdutoAddPage.class
+crud\selenium\ProdutoUITest.class
+crud\pages\ProdutoEditPage.class
+crud\repository\ProdutoRepositoryTest.class
+crud\model\ProdutoTest.class
+crud\service\ProdutoServiceTest.class
+crud\pages\ProdutoListPage.class

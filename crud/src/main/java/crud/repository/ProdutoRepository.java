@@ -1,0 +1,48 @@
+package crud.repository;
+
+import crud.model.Produto;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
+
+public class ProdutoRepository {
+    private final List<Produto> produtos = new ArrayList<>();
+    private final AtomicLong currentId = new AtomicLong(1);
+
+    public Produto save(Produto produto) {
+        if (produto.getId() == null) {
+            produto.setId(currentId.getAndIncrement());
+            produtos.add(produto);
+            return produto;
+        } else {
+            for (int i = 0; i < produtos.size(); i++) {
+                if (produtos.get(i).getId().equals(produto.getId())) {
+                    produtos.set(i, produto);
+                    return produto;
+                }
+            }
+            produtos.add(produto);
+            return produto;
+        }
+    }
+
+    public Optional<Produto> findById(Long id) {
+        return produtos.stream()
+                       .filter(p -> p.getId().equals(id))
+                       .findFirst();
+    }
+
+    public List<Produto> findAll() {
+        return new ArrayList<>(produtos);
+    }
+
+    public boolean delete(Long id) {
+        return produtos.removeIf(p -> p.getId().equals(id));
+    }
+
+    public void deleteAll() {
+        produtos.clear();
+        currentId.set(1);
+    }
+}
