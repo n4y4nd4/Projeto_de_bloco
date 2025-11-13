@@ -47,6 +47,10 @@ class ProdutoRepositoryTest {
         Optional<Produto> encontrado = repository.findById(p1.getId());
         assertTrue(encontrado.isPresent());
         assertEquals("A", encontrado.get().getNome());
+
+        Optional<Produto> encontrado2 = repository.findById(p2.getId());
+        assertTrue(encontrado2.isPresent());
+        assertEquals("B", encontrado2.get().getNome());
     }
 
     @Test

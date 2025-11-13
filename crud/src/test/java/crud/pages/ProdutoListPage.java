@@ -3,10 +3,7 @@ package crud.pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
 import java.util.List;
 
 public class ProdutoListPage {
@@ -32,25 +29,18 @@ public class ProdutoListPage {
 
     public boolean isProductListed(String nome) {
         // Use the tableBody field instead of repeating the XPath
-        try {
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.id("product-list")));
-
-            List<WebElement> tbodys = driver.findElements(tableBody);
-            if (tbodys.isEmpty()) {
-                return false;
-            }
-            WebElement tbody = tbodys.get(0);
-            List<WebElement> rows = tbody.findElements(By.tagName("tr"));
-            for (WebElement row : rows) {
-                if (row.getText().contains(nome)) {
-                    return true;
-                }
-            }
-            return false;
-        } catch (Exception e) {
+        List<WebElement> tbodys = driver.findElements(tableBody);
+        if (tbodys.isEmpty()) {
             return false;
         }
+        WebElement tbody = tbodys.get(0);
+        List<WebElement> rows = tbody.findElements(By.tagName("tr"));
+        for (WebElement row : rows) {
+            if (row.getText().contains(nome)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void clickDeleteButton(Long id) {
