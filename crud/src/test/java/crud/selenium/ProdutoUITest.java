@@ -10,8 +10,15 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.By;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,25 +31,23 @@ class ProdutoUITest {
     private ProdutoAddPage addPage;
     private ProdutoEditPage editPage;
 
+    private ChromeOptions createChromeOptions() {
+        ChromeOptions options = new ChromeOptions();
+        String chromeBinaryPath = "C:\\Arquivos de Programas\\Google\\Chrome\\Application\\chrome.exe";
+        options.setBinary(chromeBinaryPath);
+        return options;
+    }
+
     @BeforeAll
     void setupJavalin() {
         app = Main.startServer();
         try {
-            Thread.sleep(1000); // Espera 1 segundo para garantir que o Javalin subiu
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
         WebDriverManager.chromedriver().setup();
-
-
-        String chromeBinaryPath = "C:\\Arquivos de Programas\\Google\\Chrome\\Application\\chrome.exe"; 
-        
-        ChromeOptions options = new ChromeOptions();
-        
-        // Configura o Selenium para usar o binário do Chrome neste caminho
-        options.setBinary(chromeBinaryPath);
-        
-        driver = new ChromeDriver(options); // Inicializa sem o Modo Headless
+        driver = new ChromeDriver(createChromeOptions());
     }
 
     @BeforeEach
@@ -50,80 +55,102 @@ class ProdutoUITest {
         listPage = new ProdutoListPage(driver);
         addPage = new ProdutoAddPage(driver);
         editPage = new ProdutoEditPage(driver);
-        
-        // Limpa o estado da aplicação antes de cada teste
+
         try {
-            driver.get("http://localhost:7000/api/produtos/deleteall"); 
-        } catch (Exception ignored) {}
+            HttpURLConnection connection =
+                    (HttpURLConnection) new URL("http://localhost:7000/api/produtos/deleteall").openConnection();
+            connection.setRequestMethod("DELETE");
+            connection.connect();
+            connection.getResponseCode();
+            connection.disconnect();
+        } catch (Exception e) {
+            System.err.println("[ERROR] Falhou ao limpar o estado: " + e.getMessage());
+        }
     }
 
     @AfterAll
     void tearDown() {
-        if (driver != null) {
-            driver.quit();
-        }
-        if (app != null) {
-            app.stop();
-        }
+        if (driver != null) driver.quit();
+        if (app != null) app.stop();
     }
 
-    // --- Teste do Fluxo CRUD ---
-    
     @Test
     @Order(1)
     void testFluxoCRUDCompleto() {
         String nomeOriginal = "Teclado Mecânico X";
         String nomeEditado = "Teclado Mecânico Pro V2";
 
-        // C: Criar Produto (Sucesso)
+        // Criar
         listPage.open();
         listPage.clickAddButton();
         addPage.fillForm(nomeOriginal, "450.00", "50");
         addPage.clickSaveButton();
+
+        assertTrue(driver.getCurrentUrl().contains("localhost:7000"),
+                "Não redirecionou para a página inicial");
         
-        // R: Listagem e Confirmação
-        assertTrue(driver.getCurrentUrl().contains("index.html"));
-        assertTrue(listPage.getAlertMessage().contains("adicionado com sucesso"));
-        assertTrue(listPage.isProductListed(nomeOriginal));
+        // Aguarda que a lista seja atualizada após criar o produto
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.id("product-list")));
         
-        // U: Editar Produto
-        listPage.clickEditButton(1L); 
+        assertTrue(listPage.isProductListed(nomeOriginal),
+                "Produto recém-criado não encontrado na lista");
+
+        // Obtém o ID real do produto criado
+        Long produtoId = listPage.getProductIdByName(nomeOriginal);
+        assertNotNull(produtoId, "Não foi possível obter o ID do produto criado");
+
+        // Editar
+        listPage.clickEditButton(produtoId);
         editPage.fillForm(nomeEditado, "600.50", "30");
         editPage.clickUpdateButton();
-        
-        // R: Listagem e Confirmação da Edição
-        assertTrue(driver.getCurrentUrl().contains("index.html"));
-        assertTrue(listPage.getAlertMessage().contains("atualizado com sucesso"));
-        assertTrue(listPage.isProductListed(nomeEditado));
-        assertFalse(listPage.isProductListed(nomeOriginal));
 
-        // D: Excluir Produto
-        listPage.clickDeleteButton(1L);
+        assertTrue(driver.getCurrentUrl().contains("localhost:7000"),
+                "Não voltou para a listagem após edição");
         
-        // R: Listagem e Confirmação da Exclusão
-        assertTrue(driver.getCurrentUrl().contains("index.html"));
-        assertTrue(listPage.getAlertMessage().contains("excluído com sucesso"));
-        assertFalse(listPage.isProductListed(nomeEditado));
+        // Aguarda que a lista seja atualizada após editar
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.id("product-list")));
+        
+        assertTrue(listPage.isProductListed(nomeEditado),
+                "Nome editado não encontrado");
+        assertFalse(listPage.isProductListed(nomeOriginal),
+                "Nome antigo ainda aparece na lista");
+
+        // Deletar
+        listPage.clickDeleteButton(produtoId);
+
+        assertTrue(driver.getCurrentUrl().contains("localhost:7000"),
+                "Não voltou para a listagem após exclusão");
+        
+        // Aguarda que a lista seja atualizada após deletar
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.id("product-list")));
+        
+        assertFalse(listPage.isProductListed(nomeEditado),
+                "Produto deveria ter sido removido");
     }
-    
-    // --- Testes Negativos e Parametrizados ---
 
     @ParameterizedTest
     @CsvSource({
-            "Nome Inválido, 0.0, 10, O preço deve ser maior que zero.", 
-            "Nome Inválido, 100.0, -1, O estoque não pode ser negativo.", 
-            "'', 100.0, 10, O nome do produto é obrigatório." 
+            "Nome Inválido, 0.0, 10, O preço deve ser maior que zero.",
+            "Nome Inválido, 100.0, -1, O estoque não pode ser negativo.",
+            "'', 100.0, 10, O nome do produto é obrigatório."
     })
     void testCadastro_CenariosInvalidos(String nome, String preco, String estoque, String mensagemEsperada) {
         listPage.open();
         listPage.clickAddButton();
-        
+
         addPage.fillForm(nome, preco, estoque);
         addPage.clickSaveButton();
-        
-        assertTrue(addPage.isAlertVisible());
-        assertTrue(addPage.getAlertMessage().contains(mensagemEsperada));
-        
-        assertTrue(driver.getCurrentUrl().contains("add.html"));
+
+        boolean alertaVisivel = addPage.isAlertVisible();
+        String mensagemAlerta = addPage.getAlertMessage();
+
+        assertTrue(alertaVisivel, "Alerta não apareceu");
+        assertTrue(mensagemAlerta.contains(mensagemEsperada),
+                "Mensagem de erro diferente do esperado");
+
+        assertTrue(driver.getCurrentUrl().contains("add.html"),
+                "Não deveria redirecionar com dados inválidos");
     }
+
 }

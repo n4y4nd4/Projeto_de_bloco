@@ -1,0 +1,9 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+Sistema CRUD,crud,Main.JavalinJackson,37,0,0,0,8,0,3,0,3,0
+Sistema CRUD,crud,Main,100,0,0,0,20,0,6,0,6,0
+Sistema CRUD,crud.exception,ValidacaoException,0,4,0,0,0,2,0,1,0,1
+Sistema CRUD,crud.exception,ProdutoNaoEncontradoException,6,0,0,0,2,0,1,0,1,0
+Sistema CRUD,crud.controller,ProdutoController,197,0,0,0,47,0,6,0,6,0
+Sistema CRUD,crud.repository,ProdutoRepository,72,30,5,1,14,7,9,2,6,2
+Sistema CRUD,crud.service,ProdutoService,59,61,3,11,14,13,7,8,5,3
+Sistema CRUD,crud.model,Produto,76,28,8,0,15,11,11,6,7,6

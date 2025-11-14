@@ -2,11 +2,17 @@ package crud.repository;
 
 import crud.model.Produto;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class ProdutoRepository {
+/**
+ * Repositório de produtos implementando a interface genérica Repository.
+ * Encapsula a coleção de produtos e fornece operações CRUD.
+ * Segue o princípio de responsabilidade única (SRP).
+ */
+public class ProdutoRepository implements Repository<Produto, Long> {
     private final List<Produto> produtos = new ArrayList<>();
     private final AtomicLong currentId = new AtomicLong(1);
 
@@ -33,8 +39,13 @@ public class ProdutoRepository {
                        .findFirst();
     }
 
+    /**
+     * Retorna uma cópia imutável da lista de produtos para evitar modificações externas.
+     * Encapsula a coleção seguindo boas práticas de Clean Code.
+     */
+    @Override
     public List<Produto> findAll() {
-        return new ArrayList<>(produtos);
+        return Collections.unmodifiableList(new ArrayList<>(produtos));
     }
 
     public boolean delete(Long id) {

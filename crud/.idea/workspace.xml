@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="9b387f3a-4905-416a-953e-1933689fcf63" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/crud/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/crud/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/crud/model/Produto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/crud/model/Produto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/public/add.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/add.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/public/edit.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/edit.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/public/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/crud/pages/ProdutoAddPage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/crud/pages/ProdutoAddPage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/crud/pages/ProdutoEditPage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/crud/pages/ProdutoEditPage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/crud/pages/ProdutoListPage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/crud/pages/ProdutoListPage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/crud/selenium/ProdutoUITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/crud/selenium/ProdutoUITest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/crud/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/crud/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/crud/model/Produto.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/crud/model/Produto.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/public/add.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/public/add.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/public/edit.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/public/edit.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/public/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/public/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/jacoco.exec" beforeDir="false" afterPath="$PROJECT_DIR$/target/jacoco.exec" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/surefire-reports/TEST-crud.model.ProdutoTest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/target/surefire-reports/TEST-crud.model.ProdutoTest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/surefire-reports/TEST-crud.repository.ProdutoRepositoryTest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/target/surefire-reports/TEST-crud.repository.ProdutoRepositoryTest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/surefire-reports/TEST-crud.selenium.ProdutoUITest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/target/surefire-reports/TEST-crud.selenium.ProdutoUITest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/surefire-reports/TEST-crud.service.ProdutoServiceTest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/target/surefire-reports/TEST-crud.service.ProdutoServiceTest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/surefire-reports/crud.model.ProdutoTest.txt" beforeDir="false" afterPath="$PROJECT_DIR$/target/surefire-reports/crud.model.ProdutoTest.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/surefire-reports/crud.repository.ProdutoRepositoryTest.txt" beforeDir="false" afterPath="$PROJECT_DIR$/target/surefire-reports/crud.repository.ProdutoRepositoryTest.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/surefire-reports/crud.selenium.ProdutoUITest.txt" beforeDir="false" afterPath="$PROJECT_DIR$/target/surefire-reports/crud.selenium.ProdutoUITest.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/surefire-reports/crud.service.ProdutoServiceTest.txt" beforeDir="false" afterPath="$PROJECT_DIR$/target/surefire-reports/crud.service.ProdutoServiceTest.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/test-classes/crud/pages/ProdutoAddPage.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/test-classes/crud/pages/ProdutoAddPage.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/test-classes/crud/pages/ProdutoEditPage.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/test-classes/crud/pages/ProdutoEditPage.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/test-classes/crud/pages/ProdutoListPage.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/test-classes/crud/pages/ProdutoListPage.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/test-classes/crud/selenium/ProdutoUITest.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/test-classes/crud/selenium/ProdutoUITest.class" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "n4y4nd4"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/n4y4nd4/Projeto_de_bloco.git",
+    "accountId": "6086e56f-0b2b-4f19-b81a-17dd03713092"
+  }
+}]]></component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 6
+}]]></component>
+  <component name="ProjectId" id="35RXp4w47Mhe9spQbxJIdEiPFOz" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Maven.sistema-crud [clean].executor": "Run",
+    "Maven.sistema-crud [deploy].executor": "Run",
+    "Maven.sistema-crud [install].executor": "Run",
+    "Maven.sistema-crud [verify].executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Nayanda/CRUD_PB/crud/pom.xml",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "reference.settings.project.maven.runner"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="9b387f3a-4905-416a-953e-1933689fcf63" name="Changes" comment="" />
+      <created>1763074037219</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1763074037219</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="org.opentest4j.AssertionFailedError" package="org.opentest4j" />
+          <option name="timeStamp" value="6" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

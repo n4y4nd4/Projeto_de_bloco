@@ -1,6 +1,7 @@
 crud\controller\ProdutoController.class
 crud\exception\ProdutoNaoEncontradoException.class
 crud\Main.class
+crud\Main$JavalinJackson.class
 crud\service\ProdutoService.class
 crud\repository\ProdutoRepository.class
 crud\model\Produto.class

@@ -14,13 +14,16 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        
+
         <!-- Versões Centralizadas -->
         <junit.jupiter.version>5.10.1</junit.jupiter.version>
         <jqwik.version>1.8.0</jqwik.version>
         <javalin.version>5.6.3</javalin.version>
         <selenium.version>4.16.1</selenium.version>
         <surefire.version>3.2.5</surefire.version>
+
+        <!-- Define argLine como vazio para satisfazer a análise estática da IDE -->
+        <argLine></argLine>
     </properties>
 
     <dependencies>
@@ -28,7 +31,7 @@
         <dependency>
             <groupId>io.javalin</groupId>
             <artifactId>javalin</artifactId>
-            <version>5.6.3</version>
+            <version>${javalin.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -45,7 +48,7 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
-            <version>4.15.0</version>
+            <version>${selenium.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -54,24 +57,24 @@
             <version>5.6.3</version>
             <scope>test</scope>
         </dependency>
-        
+
         <!-- DEPENDÊNCIAS DO TP1: JUnit 5 -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.10.1</version>
+            <version>${junit.jupiter.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
-            <version>5.10.1</version>
+            <version>${junit.jupiter.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.10.1</version>
+            <version>${junit.jupiter.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -79,20 +82,29 @@
         <dependency>
             <groupId>net.jqwik</groupId>
             <artifactId>jqwik-api</artifactId>
-            <version>1.8.0</version>
+            <version>${jqwik.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>net.jqwik</groupId>
             <artifactId>jqwik-engine</artifactId>
-            <version>1.8.0</version>
+            <version>${jqwik.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Mockito para testes do Controller -->
+        <!-- Usando mockito-inline para suportar Java 23 -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-inline</artifactId>
+            <version>4.11.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-api</artifactId>
-            <version>4.16.1</version>
-            <scope>compile</scope>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>4.11.0</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -111,29 +123,43 @@
                     <release>${maven.compiler.source}</release>
                 </configuration>
             </plugin>
-            
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${surefire.version}</version>
                 <configuration>
                     <useModulePath>false</useModulePath>
-
+                    <!-- Configuração para usar Java 17 explicitamente -->
+                    <jvm>C:\Program Files\Java\jdk-17\bin\java.exe</jvm>
                     <forkCount>1</forkCount>
-
                     <argLine>${argLine}</argLine>
+                    <properties>
+                        <property>
+                            <name>junit.platform.includeEngines</name>
+                            <value>junit-jupiter,jqwik</value>
+                        </property>
+                    </properties>
                 </configuration>
             </plugin>
-            
+
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.11</version>
                 <executions>
                     <execution>
+                        <id>prepare-agent</id>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
+                        <configuration>
+                            <!-- Esta é a correção correta para o erro 'Unsupported class file major version 67' -->
+                            <excludes>
+                                <exclude>jdk.internal.net.http/**</exclude>
+                                <exclude>java.net.http/**</exclude>
+                            </excludes>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>report</id>
@@ -148,9 +174,8 @@
                             <goal>check</goal>
                         </goals>
                         <configuration>
-                            <!-- REQUISITO DO TP1: Exclusão de I/O para manter a cobertura > 80% -->
                             <excludes>
-                                <exclude>crud/controller/*</exclude> 
+                                <exclude>crud/controller/*</exclude>
                                 <exclude>crud/Main.class</exclude>
                             </excludes>
                             <rules>

@@ -8,6 +8,12 @@ public class Produto {
     private Double preco;
     private Integer estoque;
 
+    // --- INÍCIO DA CORREÇÃO ---
+    // Construtor vazio (obrigatório para o Jackson/JSON)
+    public Produto() {
+    }
+    // --- FIM DA CORREÇÃO ---
+
     public Produto(String nome, Double preco, Integer estoque) {
         this.nome = nome;
         this.preco = preco;
@@ -61,6 +67,9 @@ public class Produto {
 
     @Override
     public String toString() {
-        return "ID: " + id + ", Nome: " + nome + ", Preço: " + String.format("%.2f", preco) + ", Estoque: " + estoque;
+        // Lida com 'preco' nulo se o construtor vazio for usado
+        // Formata o preço com vírgula como separador decimal (formato brasileiro)
+        String precoFormatado = (preco != null) ? String.format("%.2f", preco).replace(".", ",") : "0,00";
+        return "ID: " + id + ", Nome: " + nome + ", Preço: " + precoFormatado + ", Estoque: " + estoque;
     }
 }

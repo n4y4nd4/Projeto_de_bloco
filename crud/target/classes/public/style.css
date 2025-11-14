@@ -14,3 +14,8 @@ th { background-color: #007bff; color: white; }
 .alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
 .alert-danger { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
 input[type="text"], input[type="number"] { width: 100%; padding: 10px; margin: 5px 0 10px 0; display: inline-block; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+/* Força o alerta aparecer imediatamente quando estiver visível */
+.alert {
+    opacity: 1 !important;
+    transition: none !important;
+}

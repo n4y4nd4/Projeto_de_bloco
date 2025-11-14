@@ -8,6 +8,8 @@
 <body>
     <div class="container">
         <h1>Editar Produto <span id="produto-id-display"></span></h1>
+        <p id="teste-nayanda" style="color:red; font-size:22px;">TESTE NAYANDA 999</p>
+
         <a href="/index.html" class="btn btn-primary">Voltar para Listagem</a>
         
         <div id="alert-message" class="alert alert-danger" style="display:none;"></div>
@@ -74,13 +76,28 @@
                 estoque: parseInt(document.getElementById('estoque').value, 10)
             };
 
-            const response = await fetch(`/api/produtos/${id}`, {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+            const response = await fetch(`/api/produtos/${id}`,
+            {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(produto)
+                body: JSON.stringify(produto),
+                signal: controller.signal
             });
 
-            const result = await response.json();
+            clearTimeout(timeoutId);
+
+            let result;
+            try {
+                result = await response.json();
+            } catch (parseError) {
+                alertDiv.textContent = "Erro inesperado: resposta inválida do servidor.";
+                alertDiv.style.display = 'block';
+                console.error("Erro ao parsear resposta:", parseError);
+                return;
+            }
 
             if (response.ok) {
                 window.location.href = `/index.html?msg=${encodeURIComponent('Produto ' + id + ' atualizado com sucesso.')}&type=success`;
@@ -88,6 +105,19 @@
                 alertDiv.textContent = result.message || 'Erro desconhecido ao atualizar.';
                 alertDiv.style.display = 'block';
             }
+        } catch (err) {
+            clearTimeout(timeoutId);
+            if (err.name === 'AbortError') {
+                alertDiv.textContent = "A requisição demorou muito para responder. Por favor, tente novamente.";
+                alertDiv.style.display = 'block';
+            } else if (err instanceof TypeError && err.message.includes('fetch')) {
+                alertDiv.textContent = "Erro de conexão. Verifique sua internet e tente novamente.";
+                alertDiv.style.display = 'block';
+            } else {
+                alertDiv.textContent = "Ocorreu um erro inesperado. Por favor, tente novamente mais tarde.";
+                alertDiv.style.display = 'block';
+            }
+            console.error("Erro ao atualizar produto:", err);
         });
 
         loadProduct();

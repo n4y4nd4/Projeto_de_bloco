@@ -1,0 +1,56 @@
+name: CI - Build and Test
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: 'gradle'
+        
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+      working-directory: ./crud
+      
+    - name: Build with Gradle
+      run: ./gradlew build --no-daemon
+      working-directory: ./crud
+      
+    - name: Run tests
+      run: ./gradlew test --no-daemon
+      working-directory: ./crud
+      
+    - name: Generate coverage report
+      run: ./gradlew jacocoTestReport --no-daemon
+      working-directory: ./crud
+      
+    - name: Upload coverage reports
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: coverage-reports
+        path: crud/build/reports/jacoco/test/html/**
+        retention-days: 30
+        
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results
+        path: crud/build/test-results/**
+        retention-days: 30
+

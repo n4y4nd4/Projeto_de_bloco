@@ -2,9 +2,9 @@ package crud.pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
 import java.time.Duration;
 
 
@@ -21,30 +21,52 @@ public class ProdutoAddPage {
     public ProdutoAddPage(WebDriver driver) {
 
         this.driver = driver;
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     }
 
     public void fillForm(String nome, String preco, String estoque) {
-        driver.findElement(nomeInput).sendKeys(nome);
-        driver.findElement(precoInput).sendKeys(preco);
-        driver.findElement(estoqueInput).sendKeys(estoque);
+        // Aguarda que os elementos estejam visíveis e clicáveis antes de interagir
+        WebElement nomeEl = wait.until(ExpectedConditions.elementToBeClickable(nomeInput));
+        nomeEl.clear();
+        nomeEl.sendKeys(nome);
+
+        WebElement precoEl = wait.until(ExpectedConditions.elementToBeClickable(precoInput));
+        precoEl.clear();
+        precoEl.sendKeys(preco);
+
+        WebElement estoqueEl = wait.until(ExpectedConditions.elementToBeClickable(estoqueInput));
+        estoqueEl.clear();
+        estoqueEl.sendKeys(estoque);
     }
+
 
     public void clickSaveButton() {
-        driver.findElement(saveButton).click();
+        System.out.println("[LOG] Clicando no botão de salvar...");
+        WebElement saveBtn = wait.until(ExpectedConditions.elementToBeClickable(saveButton));
+        saveBtn.click();
     }
 
-    public String getAlertMessage() {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(alertMessage));
-        return driver.findElement(alertMessage).getText();
-    }
-    
     public boolean isAlertVisible() {
-
         try {
-            return wait.until(ExpectedConditions.visibilityOfElementLocated(alertMessage)).isDisplayed();
+            WebElement alert = wait.until(ExpectedConditions.visibilityOfElementLocated(alertMessage));
+            return alert.isDisplayed() && !alert.getText().isBlank();
         } catch (Exception e) {
+            System.out.println("[LOG] ALERTA NÃO APARECEU (TIMEOUT)");
             return false;
         }
     }
+
+    public String getAlertMessage() {
+        try {
+            WebElement alert = wait.until(ExpectedConditions.visibilityOfElementLocated(alertMessage));
+            String text = alert.getText();
+            System.out.println("[LOG] Alerta capturado: " + text);
+            return text;
+        } catch (Exception e) {
+            System.out.println("[LOG] ALERTA NÃO APARECEU (TIMEOUT)");
+            return "ALERTA DE ERRO NÃO ENCONTRADO (TIMEOUT)";
+        }
+    }
+
+
 }

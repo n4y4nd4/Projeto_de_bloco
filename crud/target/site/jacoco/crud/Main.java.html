@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Main.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Sistema CRUD</a> &gt; <a href="index.source.html" class="el_package">crud</a> &gt; <span class="el_source">Main.java</span></div><h1>Main.java</h1><pre class="source lang-java linenums">package crud;
+
+import com.fasterxml.jackson.databind.ObjectMapper; // Importação necessária
+import crud.controller.ProdutoController;
+import crud.repository.ProdutoRepository;
+import crud.service.ProdutoService;
+import io.javalin.Javalin;
+import io.javalin.http.staticfiles.Location;
+import io.javalin.json.JsonMapper; // Importação necessária
+import java.lang.reflect.Type; // Importação necessária
+
+<span class="nc" id="L12">public class Main {</span>
+
+<span class="nc" id="L14">    private static ProdutoRepository repository = new ProdutoRepository();</span>
+<span class="nc" id="L15">    private static ProdutoService service = new ProdutoService(repository);</span>
+<span class="nc" id="L16">    private static ProdutoController controller = new ProdutoController(service);</span>
+
+    public static void main(String[] args) {
+<span class="nc" id="L19">        startServer();</span>
+<span class="nc" id="L20">    }</span>
+
+    public static Javalin startServer() {
+<span class="nc" id="L23">        Javalin app = Javalin.create(config -&gt; {</span>
+<span class="nc" id="L24">            config.staticFiles.add(&quot;/public&quot;, Location.CLASSPATH);</span>
+
+<span class="nc" id="L26">            config.jsonMapper(new JavalinJackson());</span>
+
+<span class="nc" id="L28">        }).start(7000);</span>
+
+
+<span class="nc" id="L31">        app.get(&quot;/api/produtos&quot;, controller::buscarTodos);</span>
+
+<span class="nc" id="L33">        app.delete(&quot;/api/produtos/deleteall&quot;, ctx -&gt; {</span>
+<span class="nc" id="L34">            repository.deleteAll();</span>
+<span class="nc" id="L35">            ctx.status(200).json(java.util.Map.of(&quot;message&quot;, &quot;Repositório limpo.&quot;));</span>
+<span class="nc" id="L36">        });</span>
+
+<span class="nc" id="L38">        app.get(&quot;/api/produtos/{id}&quot;, controller::buscarPorId);</span>
+<span class="nc" id="L39">        app.post(&quot;/api/produtos&quot;, controller::criarProduto);</span>
+<span class="nc" id="L40">        app.put(&quot;/api/produtos/{id}&quot;, controller::atualizarProduto);</span>
+<span class="nc" id="L41">        app.delete(&quot;/api/produtos/{id}&quot;, controller::deletarProduto);</span>
+
+        // --- FIM DA CORREÇÃO DE ROTA ---
+
+<span class="nc" id="L45">        return app;</span>
+    }
+
+    // Classe auxiliar interna para o Javalin usar o Jackson
+<span class="nc" id="L49">    public static class JavalinJackson implements JsonMapper {</span>
+<span class="nc" id="L50">        private final ObjectMapper mapper = new ObjectMapper();</span>
+
+        @Override
+        public &lt;T&gt; T fromJsonString(String json, Type targetType) {
+            try {
+<span class="nc" id="L55">                return mapper.readValue(json, mapper.constructType(targetType));</span>
+<span class="nc" id="L56">            } catch (Exception e) {</span>
+<span class="nc" id="L57">                throw new RuntimeException(&quot;Erro ao desserializar JSON: &quot; + json, e);</span>
+            }
+        }
+
+        @Override
+        public String toJsonString(Object obj, Type type) {
+            try {
+<span class="nc" id="L64">                return mapper.writeValueAsString(obj);</span>
+<span class="nc" id="L65">            } catch (Exception e) {</span>
+<span class="nc" id="L66">                throw new RuntimeException(&quot;Erro ao serializar JSON&quot;, e);</span>
+            }
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
