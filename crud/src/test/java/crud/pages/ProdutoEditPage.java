@@ -2,10 +2,15 @@ package crud.pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import java.time.Duration;
+
 
 public class ProdutoEditPage {
     private final WebDriver driver;
-    
+    private final WebDriverWait wait;
+
     // Seletores
     private final By idInput = By.id("id");
     private final By nomeInput = By.id("nome");
@@ -16,8 +21,10 @@ public class ProdutoEditPage {
 
     public ProdutoEditPage(WebDriver driver) {
         this.driver = driver;
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(5));
     }
-    
+
+
     public Long getProductId() {
         return Long.parseLong(driver.findElement(idInput).getAttribute("value"));
     }
@@ -38,10 +45,16 @@ public class ProdutoEditPage {
     }
 
     public String getAlertMessage() {
+        wait.until(ExpectedConditions.visibilityOfElementLocated(alertMessage));
         return driver.findElement(alertMessage).getText();
     }
-    
+
     public boolean isAlertVisible() {
-        return driver.findElement(alertMessage).isDisplayed();
+        try {
+            return wait.until(ExpectedConditions.visibilityOfElementLocated(alertMessage)).isDisplayed();
+        } catch (Exception e) {
+            return false;
+        }
     }
+
 }

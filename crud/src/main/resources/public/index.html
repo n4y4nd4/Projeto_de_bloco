@@ -42,7 +42,12 @@
                 alertDiv.className = 'alert alert-' + type;
                 alertDiv.style.display = 'block';
                 // Limpa a URL para que a mensagem não reapareça ao recarregar
+                setTimeout(() => {
                 history.replaceState(null, null, window.location.pathname);
+            }, 50);
+
+
+
             }
         }
 

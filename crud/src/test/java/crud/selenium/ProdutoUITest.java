@@ -26,15 +26,15 @@ class ProdutoUITest {
 
     @BeforeAll
     void setupJavalin() {
-        app = Main.startServer(); 
+        app = Main.startServer();
+        try {
+            Thread.sleep(1000); // Espera 1 segundo para garantir que o Javalin subiu
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
         WebDriverManager.chromedriver().setup();
 
-        // *********************************************************************************
-        // ATENÇÃO: SUBSTITUA ESTA STRING COM O CAMINHO EXATO DO CHROME NA SUA MÁQUINA!
-        // EXEMPLOS:
-        // Windows: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
-        // macOS: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-        // *********************************************************************************
+
         String chromeBinaryPath = "C:\\Arquivos de Programas\\Google\\Chrome\\Application\\chrome.exe"; 
         
         ChromeOptions options = new ChromeOptions();

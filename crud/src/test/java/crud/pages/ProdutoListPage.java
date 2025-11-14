@@ -3,12 +3,17 @@ package crud.pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
 import java.util.List;
 
 public class ProdutoListPage {
     private final WebDriver driver;
+    private final WebDriverWait wait; // Adicionar WebDriverWait
     private final String url = "http://localhost:7000/";
+
     
     // Seletores
     private final By tableBody = By.id("product-list");
@@ -17,6 +22,7 @@ public class ProdutoListPage {
 
     public ProdutoListPage(WebDriver driver) {
         this.driver = driver;
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(5)); // Inicializa espera de 5 segundos
     }
 
     public void open() {
@@ -28,12 +34,9 @@ public class ProdutoListPage {
     }
 
     public boolean isProductListed(String nome) {
-        // Use the tableBody field instead of repeating the XPath
-        List<WebElement> tbodys = driver.findElements(tableBody);
-        if (tbodys.isEmpty()) {
-            return false;
-        }
-        WebElement tbody = tbodys.get(0);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(tableBody));
+        WebElement tbody = driver.findElement(tableBody);
+
         List<WebElement> rows = tbody.findElements(By.tagName("tr"));
         for (WebElement row : rows) {
             if (row.getText().contains(nome)) {
@@ -53,6 +56,7 @@ public class ProdutoListPage {
     }
     
     public String getAlertMessage() {
+        wait.until(ExpectedConditions.visibilityOfElementLocated(alertMessage));
         return driver.findElement(alertMessage).getText();
     }
 }
