@@ -6,20 +6,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * Modelo de Pedido que integra com o sistema de Produtos.
- * Encapsula a lista de itens do pedido e calcula o total automaticamente.
- * Segue princípios de Clean Code: encapsulamento de coleções e imutabilidade parcial.
- */
+
 public class Pedido {
     private Long id;
     private String cliente;
     private final List<ItemPedido> itens;
     private LocalDateTime dataCriacao;
     
-    // Construtor vazio para Jackson/JSON
     public Pedido() {
         this.itens = new ArrayList<>();
+        this.dataCriacao = LocalDateTime.now();
     }
     
     public Pedido(String cliente) {
@@ -44,18 +40,12 @@ public class Pedido {
         this.cliente = cliente;
     }
     
-    /**
-     * Retorna uma cópia imutável da lista de itens.
-     * Encapsula a coleção para evitar modificações externas.
-     */
+    
     public List<ItemPedido> getItens() {
         return Collections.unmodifiableList(new ArrayList<>(itens));
     }
     
-    /**
-     * Adiciona um item ao pedido.
-     * Encapsula a adição de itens na coleção.
-     */
+  
     public void adicionarItem(ItemPedido item) {
         if (item == null) {
             throw new IllegalArgumentException("Item não pode ser nulo");
@@ -63,9 +53,7 @@ public class Pedido {
         itens.add(item);
     }
     
-    /**
-     * Remove um item do pedido pelo índice.
-     */
+    
     public void removerItem(int indice) {
         if (indice < 0 || indice >= itens.size()) {
             throw new IndexOutOfBoundsException("Índice inválido: " + indice);
@@ -73,10 +61,7 @@ public class Pedido {
         itens.remove(indice);
     }
     
-    /**
-     * Calcula o total do pedido somando os valores dos itens.
-     * Substitui valores primitivos por cálculo derivado (Clean Code).
-     */
+   
     public Double getTotal() {
         return itens.stream()
                 .mapToDouble(item -> item.getQuantidade() * item.getProduto().getPreco())

@@ -2,18 +2,12 @@ package crud.controller;
 
 import crud.exception.PedidoNaoEncontradoException;
 import crud.exception.ValidacaoException;
-import crud.model.ItemPedido;
 import crud.model.Pedido;
 import crud.service.PedidoService;
 import io.javalin.http.Context;
-import java.util.List;
 import java.util.Map;
 
-/**
- * Controller de pedidos seguindo o mesmo padrão do ProdutoController.
- * Trata requisições HTTP e delega lógica de negócio ao service.
- * Segue o princípio de responsabilidade única (SRP).
- */
+
 public class PedidoController {
     private final PedidoService service;
     
@@ -43,8 +37,7 @@ public class PedidoController {
     public void criarPedido(Context ctx) {
         try {
             Pedido pedidoRequest = ctx.bodyAsClass(Pedido.class);
-            List<ItemPedido> itens = pedidoRequest.getItens();
-            Pedido novoPedido = service.criarPedido(pedidoRequest.getCliente(), itens);
+            Pedido novoPedido = service.criar(pedidoRequest);
             ctx.status(201).json(novoPedido);
         } catch (ValidacaoException e) {
             ctx.status(400).json(Map.of("message", e.getMessage()));
@@ -59,11 +52,7 @@ public class PedidoController {
             Long id = ctx.pathParamAsClass("id", Long.class).get();
             Pedido pedidoRequest = ctx.bodyAsClass(Pedido.class);
             
-            Pedido pedidoAtualizado = service.atualizarPedido(
-                id,
-                pedidoRequest.getCliente(),
-                pedidoRequest.getItens()
-            );
+            Pedido pedidoAtualizado = service.atualizar(id, pedidoRequest);
             ctx.status(200).json(pedidoAtualizado);
         } catch (PedidoNaoEncontradoException e) {
             ctx.status(404).json(Map.of("message", e.getMessage()));
@@ -78,7 +67,7 @@ public class PedidoController {
     public void deletarPedido(Context ctx) {
         try {
             Long id = ctx.pathParamAsClass("id", Long.class).get();
-            service.deletarPedido(id);
+            service.deletar(id);
             ctx.status(200).json(Map.of("message", "Pedido deletado com sucesso."));
         } catch (PedidoNaoEncontradoException e) {
             ctx.status(404).json(Map.of("message", e.getMessage()));

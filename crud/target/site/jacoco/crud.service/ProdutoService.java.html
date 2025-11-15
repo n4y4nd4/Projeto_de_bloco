@@ -32,32 +32,32 @@ public class ProdutoService {
     }
 
     public List&lt;Produto&gt; buscarTodos() {
-<span class="nc" id="L35">        return repository.findAll();</span>
+<span class="fc" id="L35">        return repository.findAll();</span>
     }
 
     public Produto buscarPorId(Long id) {
-<span class="nc" id="L39">        return repository.findById(id)</span>
-<span class="nc" id="L40">                         .orElseThrow(() -&gt; new ProdutoNaoEncontradoException(id));</span>
+<span class="fc" id="L39">        return repository.findById(id)</span>
+<span class="fc" id="L40">                         .orElseThrow(() -&gt; new ProdutoNaoEncontradoException(id));</span>
     }
 
     public Produto atualizarProduto(Long id, String novoNome, Double novoPreco, Integer novoEstoque) {
-<span class="nc" id="L44">        Produto produtoExistente = buscarPorId(id);</span>
+<span class="fc" id="L44">        Produto produtoExistente = buscarPorId(id);</span>
 
-<span class="nc" id="L46">        Produto produtoAtualizado = new Produto(novoNome, novoPreco, novoEstoque);</span>
-<span class="nc" id="L47">        validarProduto(produtoAtualizado);</span>
+<span class="fc" id="L46">        Produto produtoAtualizado = new Produto(novoNome, novoPreco, novoEstoque);</span>
+<span class="fc" id="L47">        validarProduto(produtoAtualizado);</span>
 
-<span class="nc" id="L49">        produtoExistente.setNome(novoNome);</span>
-<span class="nc" id="L50">        produtoExistente.setPreco(novoPreco);</span>
-<span class="nc" id="L51">        produtoExistente.setEstoque(novoEstoque);</span>
+<span class="fc" id="L49">        produtoExistente.setNome(novoNome);</span>
+<span class="fc" id="L50">        produtoExistente.setPreco(novoPreco);</span>
+<span class="fc" id="L51">        produtoExistente.setEstoque(novoEstoque);</span>
 
-<span class="nc" id="L53">        return repository.save(produtoExistente);</span>
+<span class="fc" id="L53">        return repository.save(produtoExistente);</span>
     }
 
     public void deletarProduto(Long id) {
-<span class="nc" id="L57">        boolean deletado = repository.delete(id);</span>
-<span class="nc bnc" id="L58" title="All 2 branches missed.">        if (!deletado) {</span>
-<span class="nc" id="L59">            throw new ProdutoNaoEncontradoException(id);</span>
+<span class="fc" id="L57">        boolean deletado = repository.delete(id);</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">        if (!deletado) {</span>
+<span class="fc" id="L59">            throw new ProdutoNaoEncontradoException(id);</span>
         }
-<span class="nc" id="L61">    }</span>
+<span class="fc" id="L61">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -19,10 +19,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Testes integrados que validam a comunicação entre os sistemas de Produtos e Pedidos.
- * Garante que a integração funciona corretamente.
- */
+
 class IntegracaoProdutoPedidoTest {
     
     private static Javalin app;
@@ -40,7 +37,6 @@ class IntegracaoProdutoPedidoTest {
         
         app = Main.startServer();
         
-        // Aguarda o servidor iniciar
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
@@ -110,8 +106,6 @@ class IntegracaoProdutoPedidoTest {
         // Busca o pedido novamente
         Pedido pedidoAtualizado = pedidoService.buscarPorId(pedido.getId());
         
-        // O total do pedido deve refletir o novo preço
-        // (Nota: em um sistema real, isso pode depender da regra de negócio)
         assertEquals(100.0, pedidoAtualizado.getTotal());
     }
     
@@ -128,7 +122,6 @@ class IntegracaoProdutoPedidoTest {
         // Deleta o produto
         produtoService.deletarProduto(produto.getId());
         
-        // O pedido ainda deve existir (depende da regra de negócio)
         Pedido pedidoEncontrado = pedidoService.buscarPorId(pedido.getId());
         assertNotNull(pedidoEncontrado);
     }
@@ -152,6 +145,31 @@ class IntegracaoProdutoPedidoTest {
         List<Pedido> pedidos = pedidoService.buscarTodos();
         
         assertEquals(2, pedidos.size());
+    }
+    
+    @Test
+    void testAtualizarPedidoComItensInvalidos() {
+        Produto produto1 = produtoService.criarProduto("Produto A", 10.0, 50);
+
+        List<ItemPedido> itensIniciais = new ArrayList<>();
+        itensIniciais.add(new ItemPedido(produto1, 2));
+        Pedido pedido = pedidoService.criarPedido("Cliente X", itensIniciais);
+
+        // Tenta atualizar com um produto inexistente
+        Produto produtoFake = new Produto("Produto Fake", 100.0, 10);
+        produtoFake.setId(999L);
+        List<ItemPedido> itensAtualizadosInvalidos = new ArrayList<>();
+        itensAtualizadosInvalidos.add(new ItemPedido(produtoFake, 1));
+
+        Pedido pedidoRequestInvalido = new Pedido("Cliente X");
+        for (ItemPedido item : itensAtualizadosInvalidos) {
+            pedidoRequestInvalido.adicionarItem(item);
+        }
+        
+        Exception exception = assertThrows(Exception.class, () -> {
+            pedidoService.atualizar(pedido.getId(), pedidoRequestInvalido);
+        });
+        assertTrue(exception.getMessage().contains("Produto com ID 999 não encontrado."));
     }
 }
 

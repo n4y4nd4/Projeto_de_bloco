@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: crud.repository.PedidoRepositoryTest
+-------------------------------------------------------------------------------
+Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.017 s -- in crud.repository.PedidoRepositoryTest
