@@ -24,23 +24,43 @@ public class PedidoService implements Service<Pedido, Long> {
     }
 
     /**
-     * Valida um pedido, verificando cliente e itens.
-     * Garante que produtos referenciados existem e que quantidades são válidas.
+     * Valida um pedido usando guard clauses.
+     * Verifica cliente, itens e existência de produtos.
      */
     private void validarPedido(Pedido pedido) {
+        if (pedido == null) {
+            throw new ValidacaoException("Pedido não pode ser nulo.");
+        }
+        
         if (pedido.getCliente() == null || pedido.getCliente().trim().isEmpty()) {
             throw new ValidacaoException("O nome do cliente é obrigatório.");
         }
+        
         if (pedido.getItens().isEmpty()) {
             throw new ValidacaoException("Um pedido deve ter pelo menos um item.");
         }
-        for (ItemPedido item : pedido.getItens()) {
+        
+        validarItensPedido(pedido.getItens());
+    }
+    
+    /**
+     * Valida os itens de um pedido.
+     * Verifica se produtos existem e se quantidades são válidas.
+     */
+    private void validarItensPedido(List<ItemPedido> itens) {
+        for (ItemPedido item : itens) {
+            if (item == null) {
+                throw new ValidacaoException("Item de pedido não pode ser nulo.");
+            }
+            
             if (item.getProduto() == null || item.getProduto().getId() == null) {
                 throw new ValidacaoException("Item de pedido com produto inválido.");
             }
+            
             // Valida se o produto existe no repositório de produtos
             produtoRepository.findById(item.getProduto().getId())
-                             .orElseThrow(() -> new ValidacaoException("Produto com ID " + item.getProduto().getId() + " não encontrado."));
+                             .orElseThrow(() -> new ValidacaoException(
+                                 "Produto com ID " + item.getProduto().getId() + " não encontrado."));
 
             if (item.getQuantidade() == null || item.getQuantidade() <= 0) {
                 throw new ValidacaoException("A quantidade do item deve ser maior que zero.");
@@ -96,9 +116,18 @@ public class PedidoService implements Service<Pedido, Long> {
     
     /**
      * Atualiza um pedido existente (método da interface Service).
+     * Usa guard clauses para validação prévia.
      */
     @Override
     public Pedido atualizar(Long id, Pedido pedidoRequest) {
+        if (id == null) {
+            throw new ValidacaoException("ID do pedido não pode ser nulo.");
+        }
+        
+        if (pedidoRequest == null) {
+            throw new ValidacaoException("Dados do pedido não podem ser nulos.");
+        }
+        
         Pedido pedidoExistente = buscarPorId(id);
         
         pedidoExistente.setCliente(pedidoRequest.getCliente());

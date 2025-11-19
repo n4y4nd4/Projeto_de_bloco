@@ -72,8 +72,7 @@ class PedidoServiceTest {
 
     @Test
     void testCriarPedidoComProdutoInexistente() {
-        Produto produtoFake = new Produto("Produto Fake", 10.0, 100);
-        produtoFake.setId(999L);
+        Produto produtoFake = new Produto(999L, "Produto Fake", 10.0, 100);
         List<ItemPedido> itens = new ArrayList<>();
         itens.add(new ItemPedido(produtoFake, 2));
 

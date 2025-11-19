@@ -17,14 +17,9 @@ class ProdutoTest {
 
     @Test
     void testEqualsEHashCode() {
-        Produto produto1 = new Produto("Monitor", 1200.0, 5);
-        produto1.setId(1L);
-
-        Produto produto2 = new Produto("Monitor", 1200.0, 5);
-        produto2.setId(1L);
-
-        Produto produto3 = new Produto("Teclado", 100.0, 20);
-        produto3.setId(2L);
+        Produto produto1 = new Produto(1L, "Monitor", 1200.0, 5);
+        Produto produto2 = new Produto(1L, "Monitor", 1200.0, 5);
+        Produto produto3 = new Produto(2L, "Teclado", 100.0, 20);
 
         assertEquals(produto1, produto2);
         assertEquals(produto1.hashCode(), produto2.hashCode());
@@ -34,8 +29,7 @@ class ProdutoTest {
 
     @Test
     void testToString() {
-        Produto produto = new Produto("Mouse", 50.50, 50);
-        produto.setId(10L);
+        Produto produto = new Produto(10L, "Mouse", 50.50, 50);
         String esperado = "ID: 10, Nome: Mouse, Preço: 50,50, Estoque: 50";
         assertEquals(esperado, produto.toString());
     }

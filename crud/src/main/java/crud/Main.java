@@ -12,11 +12,7 @@ import io.javalin.http.staticfiles.Location;
 import io.javalin.json.JsonMapper;
 import java.lang.reflect.Type;
 
-/**
- * Classe principal que integra os sistemas de Produtos e Pedidos.
- * Configura o servidor Javalin e registra todas as rotas.
- * Segue o princípio de responsabilidade única: apenas configuração e inicialização.
- */
+
 public class Main {
     // Repositórios compartilhados
     private static final ProdutoRepository produtoRepository = new ProdutoRepository();

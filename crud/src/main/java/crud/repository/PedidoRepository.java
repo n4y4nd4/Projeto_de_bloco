@@ -7,15 +7,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
-/**
- * Repositório de pedidos implementando a interface genérica Repository.
- * Reutiliza o padrão estabelecido em ProdutoRepository.
- * Segue o princípio DRY (Don't Repeat Yourself).
- */
+
 public class PedidoRepository implements Repository<Pedido, Long> {
     private final List<Pedido> pedidos = new ArrayList<>();
     private final AtomicLong currentId = new AtomicLong(1);
     
+    /**
+     * Salva um pedido. Se não tiver ID, cria novo. Se tiver, atualiza.
+     * Mantém compatibilidade com modelo mutável de Pedido.
+     */
     @Override
     public Pedido save(Pedido pedido) {
         if (pedido.getId() == null) {
@@ -41,10 +41,7 @@ public class PedidoRepository implements Repository<Pedido, Long> {
                      .findFirst();
     }
     
-    /**
-     * Retorna uma cópia imutável da lista de pedidos.
-     * Encapsula a coleção seguindo boas práticas.
-     */
+   
     @Override
     public List<Pedido> findAll() {
         return Collections.unmodifiableList(new ArrayList<>(pedidos));

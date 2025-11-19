@@ -13,13 +13,23 @@ public class ProdutoService {
         this.repository = repository;
     }
 
+    /**
+     * Valida um produto usando guard clauses.
+     * Retorna void, lança exceção se inválido.
+     */
     private void validarProduto(Produto produto) {
+        if (produto == null) {
+            throw new ValidacaoException("Produto não pode ser nulo.");
+        }
+        
         if (produto.getNome() == null || produto.getNome().trim().isEmpty()) {
             throw new ValidacaoException("O nome do produto é obrigatório.");
         }
+        
         if (produto.getPreco() == null || produto.getPreco() <= 0) {
             throw new ValidacaoException("O preço deve ser maior que zero.");
         }
+        
         if (produto.getEstoque() == null || produto.getEstoque() < 0) {
             throw new ValidacaoException("O estoque não pode ser negativo.");
         }
@@ -40,17 +50,19 @@ public class ProdutoService {
                          .orElseThrow(() -> new ProdutoNaoEncontradoException(id));
     }
 
+    /**
+     * Atualiza um produto existente criando uma nova instância imutável.
+     * Segue o princípio de imutabilidade: não modifica o objeto original.
+     */
     public Produto atualizarProduto(Long id, String novoNome, Double novoPreco, Integer novoEstoque) {
-        Produto produtoExistente = buscarPorId(id);
+        // Verifica se o produto existe (lança exceção se não existir)
+        buscarPorId(id);
 
-        Produto produtoAtualizado = new Produto(novoNome, novoPreco, novoEstoque);
+        // Cria nova instância imutável com os dados atualizados
+        Produto produtoAtualizado = new Produto(id, novoNome, novoPreco, novoEstoque);
         validarProduto(produtoAtualizado);
 
-        produtoExistente.setNome(novoNome);
-        produtoExistente.setPreco(novoPreco);
-        produtoExistente.setEstoque(novoEstoque);
-
-        return repository.save(produtoExistente);
+        return repository.save(produtoAtualizado);
     }
 
     public void deletarProduto(Long id) {

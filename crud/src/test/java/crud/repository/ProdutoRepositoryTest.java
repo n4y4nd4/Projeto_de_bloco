@@ -12,7 +12,6 @@ import java.util.Optional;
 
 class ProdutoRepositoryTest {
 
-    // initialize inline so jqwik property methods also see a non-null repository
     private ProdutoRepository repository = new ProdutoRepository();
 
     @Test
@@ -31,8 +30,8 @@ class ProdutoRepositoryTest {
         Produto salvo = repository.save(produto);
         Long id = salvo.getId();
 
-        salvo.setPreco(120.0);
-        Produto atualizado = repository.save(salvo);
+        Produto produtoAtualizado = new Produto(id, "Teclado", 120.0, 5);
+        Produto atualizado = repository.save(produtoAtualizado);
 
         assertEquals(id, atualizado.getId());
         assertEquals(120.0, atualizado.getPreco());

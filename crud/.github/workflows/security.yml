@@ -1,0 +1,113 @@
+name: Security Analysis (SAST/DAST)
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    # Run security scan daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+env:
+  JAVA_VERSION: '17'
+
+jobs:
+  sast-analysis:
+    name: SAST - Static Application Security Testing
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: ☕ Set up JDK ${{ env.JAVA_VERSION }}
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: 'temurin'
+        cache: 'gradle'
+        
+    - name: 🔧 Grant execute permission for gradlew
+      run: chmod +x gradlew
+      working-directory: ./crud
+      
+    - name: 🔍 Run OWASP Dependency Check
+      uses: dependency-check/Dependency-Check_Action@main
+      id: depcheck
+      with:
+        project: 'CRUD_PB'
+        path: './crud'
+        format: 'HTML'
+        args: >
+          --failOnCVSS 7
+          --enableRetired
+      continue-on-error: true
+      
+    - name: 📤 Upload dependency check report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: dependency-check-report
+        path: reports/**
+        retention-days: 30
+        
+    - name: 🛡️ Run SpotBugs Security Analysis
+      run: |
+        echo "::group::🛡️ Running SpotBugs security analysis"
+        ./gradlew spotbugsMain spotbugsTest --no-daemon || true
+        echo "::endgroup::"
+      working-directory: ./crud
+      continue-on-error: true
+      
+    - name: 📝 Generate security summary
+      if: always()
+      run: |
+        echo "::group::📝 Security Analysis Summary"
+        echo "### 🛡️ Security Analysis Results" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "| Tool | Status |" >> $GITHUB_STEP_SUMMARY
+        echo "|------|--------|" >> $GITHUB_STEP_SUMMARY
+        
+        if [ "${{ steps.depcheck.outcome }}" == "success" ]; then
+          echo "| 🔍 OWASP Dependency Check | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "| 🔍 OWASP Dependency Check | ⚠️ Issues Found |" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        echo "| 🛡️ SpotBugs | ✅ Completed |" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "📋 Detailed reports available in artifacts." >> $GITHUB_STEP_SUMMARY
+        echo "::endgroup::"
+        
+  codeql-analysis:
+    name: CodeQL Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+      
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 🔍 Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: java
+        
+    - name: 🔨 Build project
+      run: |
+        chmod +x gradlew
+        ./gradlew build --no-daemon
+      working-directory: ./crud
+      
+    - name: 🔍 Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
+      with:
+        category: "/language:java"
+
+

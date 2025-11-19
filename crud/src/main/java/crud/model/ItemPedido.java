@@ -2,11 +2,7 @@ package crud.model;
 
 import java.util.Objects;
 
-/**
- * Value Object representando um item de pedido.
- * Encapsula a relação entre Produto e quantidade.
- * Segue princípios de Clean Code: substituição de primitivos por objetos.
- */
+
 public class ItemPedido {
     private final Produto produto;
     private final Integer quantidade;
@@ -30,9 +26,7 @@ public class ItemPedido {
         return quantidade;
     }
     
-    /**
-     * Calcula o subtotal do item (preço * quantidade).
-     */
+    
     public Double getSubtotal() {
         return produto.getPreco() * quantidade;
     }

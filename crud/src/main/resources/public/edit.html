@@ -67,57 +67,59 @@
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            alertDiv.style.display = 'none';
 
-            const id = idInput.value;
-            const produto = {
-                nome: document.getElementById('nome').value,
-                preco: parseFloat(document.getElementById('preco').value),
-                estoque: parseInt(document.getElementById('estoque').value, 10)
-            };
-
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 10000);
-
-            const response = await fetch(`/api/produtos/${id}`,
-            {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(produto),
-                signal: controller.signal
-            });
-
-            clearTimeout(timeoutId);
-
-            let result;
             try {
-                result = await response.json();
-            } catch (parseError) {
-                alertDiv.textContent = "Erro inesperado: resposta inválida do servidor.";
-                alertDiv.style.display = 'block';
-                console.error("Erro ao parsear resposta:", parseError);
-                return;
-            }
+                alertDiv.style.display = 'none';
 
-            if (response.ok) {
-                window.location.href = `/index.html?msg=${encodeURIComponent('Produto ' + id + ' atualizado com sucesso.')}&type=success`;
-            } else {
-                alertDiv.textContent = result.message || 'Erro desconhecido ao atualizar.';
-                alertDiv.style.display = 'block';
+                const id = idInput.value;
+                const produto = {
+                    nome: document.getElementById('nome').value,
+                    preco: parseFloat(document.getElementById('preco').value),
+                    estoque: parseInt(document.getElementById('estoque').value, 10)
+                };
+
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+                const response = await fetch(`/api/produtos/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(produto),
+                    signal: controller.signal
+                });
+
+                clearTimeout(timeoutId);
+
+                let result;
+                try {
+                    result = await response.json();
+                } catch (parseError) {
+                    alertDiv.textContent = "Erro inesperado: resposta inválida do servidor.";
+                    alertDiv.style.display = 'block';
+                    console.error("Erro ao parsear resposta:", parseError);
+                    return;
+                }
+
+                if (response.ok) {
+                    window.location.href = `/index.html?msg=${encodeURIComponent('Produto ' + id + ' atualizado com sucesso.')}&type=success`;
+                } else {
+                    alertDiv.textContent = result.message || 'Erro desconhecido ao atualizar.';
+                    alertDiv.style.display = 'block';
+                }
+
+            } catch (err) {
+                if (err.name === 'AbortError') {
+                    alertDiv.textContent = "A requisição demorou muito para responder. Por favor, tente novamente.";
+                    alertDiv.style.display = 'block';
+                } else if (err instanceof TypeError && err.message.includes('fetch')) {
+                    alertDiv.textContent = "Erro de conexão. Verifique sua internet e tente novamente.";
+                    alertDiv.style.display = 'block';
+                } else {
+                    alertDiv.textContent = "Ocorreu um erro inesperado. Por favor, tente novamente mais tarde.";
+                    alertDiv.style.display = 'block';
+                }
+                console.error("Erro ao atualizar produto:", err);
             }
-        } catch (err) {
-            clearTimeout(timeoutId);
-            if (err.name === 'AbortError') {
-                alertDiv.textContent = "A requisição demorou muito para responder. Por favor, tente novamente.";
-                alertDiv.style.display = 'block';
-            } else if (err instanceof TypeError && err.message.includes('fetch')) {
-                alertDiv.textContent = "Erro de conexão. Verifique sua internet e tente novamente.";
-                alertDiv.style.display = 'block';
-            } else {
-                alertDiv.textContent = "Ocorreu um erro inesperado. Por favor, tente novamente mais tarde.";
-                alertDiv.style.display = 'block';
-            }
-            console.error("Erro ao atualizar produto:", err);
         });
 
         loadProduct();

@@ -31,8 +31,7 @@ class ProdutoControllerTest {
         service = mock(ProdutoService.class);
         controller = new ProdutoController(service);
         ctx = mock(Context.class);
-        // Configura o mock para retornar ele mesmo quando status() é chamado,
-        // permitindo encadeamento como ctx.status(200).json(...)
+      
         when(ctx.status(anyInt())).thenReturn(ctx);
     }
 
@@ -60,7 +59,6 @@ class ProdutoControllerTest {
         verify(ctx).json(any(List.class));
     }
 
-    // Helper method to create a mock Validator that responds to get() calls
     @SuppressWarnings("unchecked")
     private Validator<Long> createPathParamMock(Long value) {
         Validator<Long> validator = mock(Validator.class);
@@ -77,8 +75,7 @@ class ProdutoControllerTest {
 
     @Test
     void testBuscarPorId_Sucesso() {
-        Produto produto = new Produto("Produto", 10.0, 5);
-        produto.setId(1L);
+        Produto produto = new Produto(1L, "Produto", 10.0, 5);
 
         Validator<Long> pathParamMock = createPathParamMock(1L);
         when(ctx.pathParamAsClass(eq("id"), eq(Long.class))).thenReturn(pathParamMock);
@@ -124,8 +121,7 @@ class ProdutoControllerTest {
     @Test
     void testCriarProduto_Sucesso() {
         Produto produtoRequest = new Produto("Novo Produto", 15.0, 10);
-        Produto produtoSalvo = new Produto("Novo Produto", 15.0, 10);
-        produtoSalvo.setId(1L);
+        Produto produtoSalvo = new Produto(1L, "Novo Produto", 15.0, 10);
 
         when(ctx.bodyAsClass(Produto.class)).thenReturn(produtoRequest);
         when(service.criarProduto(anyString(), anyDouble(), anyInt())).thenReturn(produtoSalvo);
@@ -184,8 +180,7 @@ class ProdutoControllerTest {
     @Test
     void testAtualizarProduto_Sucesso() {
         Produto produtoRequest = new Produto("Produto Atualizado", 20.0, 15);
-        Produto produtoAtualizado = new Produto("Produto Atualizado", 20.0, 15);
-        produtoAtualizado.setId(1L);
+        Produto produtoAtualizado = new Produto(1L, "Produto Atualizado", 20.0, 15);
 
         Validator<Long> pathParamMock = createPathParamMock(1L);
         when(ctx.pathParamAsClass(eq("id"), eq(Long.class))).thenReturn(pathParamMock);

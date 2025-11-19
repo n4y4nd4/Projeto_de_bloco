@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: crud.selenium.ProdutoUINetworkTest
--------------------------------------------------------------------------------
-Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 9.808 s -- in crud.selenium.ProdutoUINetworkTest

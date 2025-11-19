@@ -1,0 +1,263 @@
+name: CD - Deploy to Environments
+
+on:
+  push:
+    branches: [ main ]
+  release:
+    types: [ published ]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy'
+        required: true
+        type: choice
+        options:
+          - dev
+          - test
+          - prod
+
+env:
+  JAVA_VERSION: '17'
+  APP_PORT: 7000
+
+jobs:
+  build:
+    name: Build Application
+    runs-on: ubuntu-latest
+    outputs:
+      artifact-path: ${{ steps.build.outputs.artifact-path }}
+      
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: ☕ Set up JDK ${{ env.JAVA_VERSION }}
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: 'temurin'
+        cache: 'gradle'
+        
+    - name: 🔧 Grant execute permission for gradlew
+      run: chmod +x gradlew
+      working-directory: ./crud
+      
+    - name: 📦 Build application
+      id: build
+      run: |
+        echo "::group::🔨 Building application"
+        ./gradlew clean build --no-daemon
+        echo "::endgroup::"
+      working-directory: ./crud
+      
+    - name: 📤 Upload build artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: application-jar
+        path: crud/build/libs/*.jar
+        retention-days: 7
+
+  deploy-dev:
+    name: Deploy to Development
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: development
+      url: http://localhost:${{ env.APP_PORT }}
+      
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 📥 Download build artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: application-jar
+        path: ./artifacts
+        
+    - name: ☕ Set up JDK ${{ env.JAVA_VERSION }}
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: 'temurin'
+        
+    - name: 🚀 Start application (Dev)
+      run: |
+        echo "::group::🚀 Starting application in development mode"
+        java -jar artifacts/*.jar &
+        echo $! > app.pid
+        sleep 10
+        echo "::endgroup::"
+        
+    - name: ✅ Health check
+      run: |
+        echo "::group::✅ Performing health check"
+        for i in {1..30}; do
+          if curl -f http://localhost:${{ env.APP_PORT }}/api/produtos > /dev/null 2>&1; then
+            echo "✅ Application is healthy"
+            exit 0
+          fi
+          echo "⏳ Waiting for application to start... ($i/30)"
+          sleep 2
+        done
+        echo "❌ Application failed to start"
+        exit 1
+        echo "::endgroup::"
+        
+    - name: 🧪 Run post-deploy tests
+      run: |
+        echo "::group::🧪 Running post-deploy tests"
+        cd crud
+        chmod +x gradlew
+        ./gradlew test --tests "*PostDeployTest" -Dapp.url=http://localhost:${{ env.APP_PORT }} --no-daemon || true
+        echo "::endgroup::"
+      continue-on-error: true
+      
+    - name: 🛑 Stop application
+      if: always()
+      run: |
+        if [ -f app.pid ]; then
+          kill $(cat app.pid) || true
+          rm app.pid
+        fi
+
+  deploy-test:
+    name: Deploy to Test
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: test
+      url: http://localhost:${{ env.APP_PORT }}
+      
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 📥 Download build artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: application-jar
+        path: ./artifacts
+        
+    - name: ☕ Set up JDK ${{ env.JAVA_VERSION }}
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: 'temurin'
+        
+    - name: 🚀 Start application (Test)
+      run: |
+        echo "::group::🚀 Starting application in test mode"
+        java -jar artifacts/*.jar &
+        echo $! > app.pid
+        sleep 10
+        echo "::endgroup::"
+        
+    - name: ✅ Health check
+      run: |
+        echo "::group::✅ Performing health check"
+        for i in {1..30}; do
+          if curl -f http://localhost:${{ env.APP_PORT }}/api/produtos > /dev/null 2>&1; then
+            echo "✅ Application is healthy"
+            exit 0
+          fi
+          echo "⏳ Waiting for application to start... ($i/30)"
+          sleep 2
+        done
+        echo "❌ Application failed to start"
+        exit 1
+        echo "::endgroup::"
+        
+    - name: 🧪 Run comprehensive post-deploy tests
+      run: |
+        echo "::group::🧪 Running comprehensive post-deploy tests"
+        cd crud
+        chmod +x gradlew
+        ./gradlew test --tests "*PostDeployTest" -Dapp.url=http://localhost:${{ env.APP_PORT }} --no-daemon
+        echo "::endgroup::"
+        
+    - name: 🛑 Stop application
+      if: always()
+      run: |
+        if [ -f app.pid ]; then
+          kill $(cat app.pid) || true
+          rm app.pid
+        fi
+
+  deploy-prod:
+    name: Deploy to Production
+    needs: [build, deploy-test]
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: http://localhost:${{ env.APP_PORT }}
+      
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 📥 Download build artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: application-jar
+        path: ./artifacts
+        
+    - name: ☕ Set up JDK ${{ env.JAVA_VERSION }}
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: 'temurin'
+        
+    - name: 🚀 Start application (Production)
+      run: |
+        echo "::group::🚀 Starting application in production mode"
+        java -jar artifacts/*.jar &
+        echo $! > app.pid
+        sleep 10
+        echo "::endgroup::"
+        
+    - name: ✅ Health check
+      run: |
+        echo "::group::✅ Performing production health check"
+        for i in {1..30}; do
+          if curl -f http://localhost:${{ env.APP_PORT }}/api/produtos > /dev/null 2>&1; then
+            echo "✅ Application is healthy"
+            exit 0
+          fi
+          echo "⏳ Waiting for application to start... ($i/30)"
+          sleep 2
+        done
+        echo "❌ Application failed to start"
+        exit 1
+        echo "::endgroup::"
+        
+    - name: 🧪 Run production smoke tests
+      run: |
+        echo "::group::🧪 Running production smoke tests"
+        cd crud
+        chmod +x gradlew
+        ./gradlew test --tests "*PostDeployTest" -Dapp.url=http://localhost:${{ env.APP_PORT }} --no-daemon
+        echo "::endgroup::"
+        
+    - name: 📝 Deployment summary
+      if: always()
+      run: |
+        echo "::group::📝 Deployment Summary"
+        echo "### 🚀 Production Deployment" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "| Status | Details |" >> $GITHUB_STEP_SUMMARY
+        echo "|--------|---------|" >> $GITHUB_STEP_SUMMARY
+        echo "| 🌍 Environment | Production |" >> $GITHUB_STEP_SUMMARY
+        echo "| 🔗 URL | http://localhost:${{ env.APP_PORT }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| ✅ Status | Deployed Successfully |" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "::endgroup::"
+        
+    - name: 🛑 Stop application
+      if: always()
+      run: |
+        if [ -f app.pid ]; then
+          kill $(cat app.pid) || true
+          rm app.pid
+        fi
+

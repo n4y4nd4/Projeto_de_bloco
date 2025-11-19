@@ -52,8 +52,7 @@ class PedidoControllerTest {
     @Test
     void testBuscarTodos_Sucesso() {
         List<Pedido> pedidos = new ArrayList<>();
-        Produto produto = new Produto("Produto", 10.0, 100);
-        produto.setId(1L);
+        Produto produto = new Produto(1L, "Produto", 10.0, 100);
         Pedido pedido1 = new Pedido("Cliente 1");
         pedido1.adicionarItem(new ItemPedido(produto, 2));
         pedidos.add(pedido1);
@@ -69,8 +68,7 @@ class PedidoControllerTest {
     @Test
     void testBuscarPorId_Sucesso() {
         Long id = 1L;
-        Produto produto = new Produto("Produto", 10.0, 100);
-        produto.setId(1L);
+        Produto produto = new Produto(1L, "Produto", 10.0, 100);
         Pedido pedido = new Pedido("Cliente");
         pedido.setId(id);
         pedido.adicionarItem(new ItemPedido(produto, 2));
@@ -116,8 +114,7 @@ class PedidoControllerTest {
 
     @Test
     void testCriarPedido_Sucesso() {
-        Produto produto = new Produto("Produto", 10.0, 100);
-        produto.setId(1L);
+        Produto produto = new Produto(1L, "Produto", 10.0, 100);
         Pedido pedidoRequest = new Pedido("Cliente");
         pedidoRequest.adicionarItem(new ItemPedido(produto, 2));
 
@@ -137,8 +134,7 @@ class PedidoControllerTest {
 
     @Test
     void testCriarPedido_ValidacaoException() {
-        Produto produto = new Produto("Produto", 10.0, 100);
-        produto.setId(1L);
+        Produto produto = new Produto(1L, "Produto", 10.0, 100);
         Pedido pedidoRequest = new Pedido("");
         pedidoRequest.adicionarItem(new ItemPedido(produto, 2));
 
@@ -169,8 +165,7 @@ class PedidoControllerTest {
     @Test
     void testAtualizarPedido_Sucesso() {
         Long id = 1L;
-        Produto produto = new Produto("Produto", 10.0, 100);
-        produto.setId(1L);
+        Produto produto = new Produto(1L, "Produto", 10.0, 100);
         Pedido pedidoRequest = new Pedido("Cliente Atualizado");
         pedidoRequest.adicionarItem(new ItemPedido(produto, 3));
 
@@ -193,8 +188,7 @@ class PedidoControllerTest {
     @Test
     void testAtualizarPedido_PedidoNaoEncontrado() {
         Long id = 999L;
-        Produto produto = new Produto("Produto", 10.0, 100);
-        produto.setId(1L);
+        Produto produto = new Produto(1L, "Produto", 10.0, 100);
         Pedido pedidoRequest = new Pedido("Cliente");
         pedidoRequest.adicionarItem(new ItemPedido(produto, 2));
 
@@ -215,8 +209,7 @@ class PedidoControllerTest {
     @Test
     void testAtualizarPedido_ValidacaoException() {
         Long id = 1L;
-        Produto produto = new Produto("Produto", 10.0, 100);
-        produto.setId(1L);
+        Produto produto = new Produto(1L, "Produto", 10.0, 100);
         Pedido pedidoRequest = new Pedido("");
         pedidoRequest.adicionarItem(new ItemPedido(produto, 2));
 

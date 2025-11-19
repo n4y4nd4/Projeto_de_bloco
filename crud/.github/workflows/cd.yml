@@ -5,38 +5,68 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+env:
+  JAVA_VERSION: '17'
+
 jobs:
   coverage-check:
+    name: Coverage and Quality Check
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     
     steps:
-    - name: Checkout code
+    - name: 📥 Checkout code
       uses: actions/checkout@v4
       
-    - name: Set up JDK 17
+    - name: ☕ Set up JDK ${{ env.JAVA_VERSION }}
       uses: actions/setup-java@v4
       with:
-        java-version: '17'
+        java-version: ${{ env.JAVA_VERSION }}
         distribution: 'temurin'
         cache: 'gradle'
         
-    - name: Grant execute permission for gradlew
+    - name: 🔧 Grant execute permission for gradlew
       run: chmod +x gradlew
       working-directory: ./crud
       
-    - name: Run tests with coverage
-      run: ./gradlew test jacocoTestReport jacocoTestCoverageVerification --no-daemon
+    - name: 🧪 Run tests with coverage
+      run: |
+        echo "::group::🧪 Running tests with coverage"
+        ./gradlew test jacocoTestReport jacocoTestCoverageVerification --no-daemon --stacktrace
+        echo "::endgroup::"
       working-directory: ./crud
       
-    - name: Generate coverage report
-      run: ./gradlew jacocoTestReport --no-daemon
+    - name: 📊 Generate coverage report
+      run: |
+        echo "::group::📊 Generating coverage report"
+        ./gradlew jacocoTestReport --no-daemon
+        echo "::endgroup::"
       working-directory: ./crud
       
-    - name: Upload coverage to artifacts
+    - name: 📤 Upload coverage to artifacts
       uses: actions/upload-artifact@v4
       if: always()
       with:
         name: coverage-report
         path: crud/build/reports/jacoco/test/html/**
         retention-days: 30
-
+        
+    - name: 📝 Generate coverage summary
+      if: always()
+      run: |
+        echo "::group::📝 Coverage Summary"
+        echo "### 📊 Code Coverage Report" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        if [ -f crud/build/reports/jacoco/test/jacocoTestReport.xml ]; then
+          echo "✅ Coverage report generated successfully" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📋 Full HTML report available in artifacts." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Coverage Threshold:** 90% (Instructions)" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch Coverage:** 85% (Branches)" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "⚠️ Coverage report not found" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        echo "::endgroup::"

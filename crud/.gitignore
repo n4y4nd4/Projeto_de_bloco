@@ -1,0 +1,59 @@
+# Build directories
+build/
+target/
+out/
+bin/
+dist/
+
+# Gradle
+.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+.gradletasknamecache
+
+# Maven
+.mvn/
+mvnw
+mvnw.cmd
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.classpath
+.project
+.settings/
+*.swp
+*.swo
+*~
+
+# Compiled classes
+*.class
+
+# Logs
+*.log
+server.log
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Test reports
+*.exec
+*.hprof
+hs_err_pid*
+
+# Temporary files
+*.tmp
+*.bak
+*.cache
+tmp/
+
+# Application specific
+*.jar
+*.war
+*.ear
+

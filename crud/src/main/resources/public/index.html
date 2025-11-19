@@ -31,7 +31,6 @@
         const tableBody = document.getElementById('product-list');
         const alertDiv = document.getElementById('alert-message');
         
-        // Função para extrair mensagem da URL (após redirecionamento)
         function checkUrlForMessage() {
             const urlParams = new URLSearchParams(window.location.search);
             const msg = urlParams.get('msg');
@@ -41,7 +40,6 @@
                 alertDiv.textContent = decodeURIComponent(msg);
                 alertDiv.className = 'alert alert-' + type;
                 alertDiv.style.display = 'block';
-                // Limpa a URL para que a mensagem não reapareça ao recarregar
                 setTimeout(() => {
                 history.replaceState(null, null, window.location.pathname);
             }, 50);

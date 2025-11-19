@@ -18,8 +18,7 @@ class PedidoRepositoryTest {
     @BeforeEach
     void setUp() {
         repository = new PedidoRepository();
-        produto = new Produto("Produto Teste", 10.0, 100);
-        produto.setId(1L);
+        produto = new Produto(1L, "Produto Teste", 10.0, 100);
     }
 
     @Test

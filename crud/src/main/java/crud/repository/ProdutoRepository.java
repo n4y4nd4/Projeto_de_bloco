@@ -7,20 +7,20 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
-/**
- * Repositório de produtos implementando a interface genérica Repository.
- * Encapsula a coleção de produtos e fornece operações CRUD.
- * Segue o princípio de responsabilidade única (SRP).
- */
+
 public class ProdutoRepository implements Repository<Produto, Long> {
     private final List<Produto> produtos = new ArrayList<>();
     private final AtomicLong currentId = new AtomicLong(1);
 
+    /**
+     * Salva um produto. Se não tiver ID, cria novo. Se tiver, atualiza.
+     * Retorna uma nova instância imutável com ID atribuído.
+     */
     public Produto save(Produto produto) {
         if (produto.getId() == null) {
-            produto.setId(currentId.getAndIncrement());
-            produtos.add(produto);
-            return produto;
+            Produto produtoComId = produto.comId(currentId.getAndIncrement());
+            produtos.add(produtoComId);
+            return produtoComId;
         } else {
             for (int i = 0; i < produtos.size(); i++) {
                 if (produtos.get(i).getId().equals(produto.getId())) {
@@ -39,10 +39,7 @@ public class ProdutoRepository implements Repository<Produto, Long> {
                        .findFirst();
     }
 
-    /**
-     * Retorna uma cópia imutável da lista de produtos para evitar modificações externas.
-     * Encapsula a coleção seguindo boas práticas de Clean Code.
-     */
+    
     @Override
     public List<Produto> findAll() {
         return Collections.unmodifiableList(new ArrayList<>(produtos));

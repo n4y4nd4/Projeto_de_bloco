@@ -78,8 +78,7 @@ class IntegracaoProdutoPedidoTest {
     @Test
     void testCriarPedidoComProdutoInexistente() {
         // Tenta criar um pedido com um produto que não existe
-        Produto produtoFake = new Produto("Produto Fake", 10.0, 100);
-        produtoFake.setId(999L);
+        Produto produtoFake = new Produto(999L, "Produto Fake", 10.0, 100);
         
         List<ItemPedido> itens = new ArrayList<>();
         itens.add(new ItemPedido(produtoFake, 5));
@@ -90,7 +89,7 @@ class IntegracaoProdutoPedidoTest {
     }
     
     @Test
-    void testPedidoRefleteAlteracoesNoProduto() {
+    void testPedidoMantemPrecoOriginalDoProduto() {
         // Cria produto e pedido
         Produto produto = produtoService.criarProduto("Produto Original", 10.0, 100);
         List<ItemPedido> itens = new ArrayList<>();
@@ -100,13 +99,16 @@ class IntegracaoProdutoPedidoTest {
         Double totalOriginal = pedido.getTotal();
         assertEquals(50.0, totalOriginal);
         
-        // Atualiza o preço do produto
+        // Atualiza o preço do produto (cria nova instância imutável)
         produtoService.atualizarProduto(produto.getId(), "Produto Atualizado", 20.0, 100);
         
-        // Busca o pedido novamente
+        // Busca o pedido novamente - deve manter o preço original
+        // porque ItemPedido referencia a instância original do produto (imutável)
         Pedido pedidoAtualizado = pedidoService.buscarPorId(pedido.getId());
         
-        assertEquals(100.0, pedidoAtualizado.getTotal());
+        // O pedido mantém o preço original do produto quando foi criado
+        // Isso é o comportamento correto com imutabilidade
+        assertEquals(50.0, pedidoAtualizado.getTotal());
     }
     
     @Test
@@ -157,7 +159,7 @@ class IntegracaoProdutoPedidoTest {
 
         // Tenta atualizar com um produto inexistente
         Produto produtoFake = new Produto("Produto Fake", 100.0, 10);
-        produtoFake.setId(999L);
+        produtoFake = new Produto(999L, "Produto Fake", 10.0, 100);
         List<ItemPedido> itensAtualizadosInvalidos = new ArrayList<>();
         itensAtualizadosInvalidos.add(new ItemPedido(produtoFake, 1));
 

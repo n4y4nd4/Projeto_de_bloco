@@ -56,10 +56,8 @@ class ItemPedidoTest {
 
     @Test
     void testEqualsMesmoProdutoEMesmaQuantidade() {
-        Produto produto1 = new Produto("Produto", 10.0, 100);
-        produto1.setId(1L);
-        Produto produto2 = new Produto("Produto", 10.0, 100);
-        produto2.setId(1L);
+        Produto produto1 = new Produto(1L, "Produto", 10.0, 100);
+        Produto produto2 = new Produto(1L, "Produto", 10.0, 100);
 
         ItemPedido item1 = new ItemPedido(produto1, 5);
         ItemPedido item2 = new ItemPedido(produto2, 5);
@@ -69,8 +67,7 @@ class ItemPedidoTest {
 
     @Test
     void testEqualsQuantidadesDiferentes() {
-        Produto produto = new Produto("Produto", 10.0, 100);
-        produto.setId(1L);
+        Produto produto = new Produto(1L, "Produto", 10.0, 100);
 
         ItemPedido item1 = new ItemPedido(produto, 5);
         ItemPedido item2 = new ItemPedido(produto, 3);
@@ -104,10 +101,8 @@ class ItemPedidoTest {
 
     @Test
     void testHashCode() {
-        Produto produto1 = new Produto("Produto", 10.0, 100);
-        produto1.setId(1L);
-        Produto produto2 = new Produto("Produto", 10.0, 100);
-        produto2.setId(1L);
+        Produto produto1 = new Produto(1L, "Produto", 10.0, 100);
+        Produto produto2 = new Produto(1L, "Produto", 10.0, 100);
 
         ItemPedido item1 = new ItemPedido(produto1, 5);
         ItemPedido item2 = new ItemPedido(produto2, 5);

@@ -35,21 +35,16 @@ public class ProdutoEditPage {
     public void fillForm(String nome, String preco, String estoque) {
         System.out.println("[LOG] Preenchendo formulário de edição...");
         
-        // Aguarda que a página de edição carregue completamente
         wait.until(ExpectedConditions.urlContains("edit.html"));
-        
-        // Aguarda que o JavaScript carregue o produto e exiba o formulário
-        // O formulário começa com display:none e só é exibido após carregar o produto
+
         By editForm = By.id("edit-form");
         
-        // Aguarda até que o formulário esteja visível OU que apareça mensagem de erro
         try {
             wait.until(ExpectedConditions.or(
                 ExpectedConditions.visibilityOfElementLocated(editForm),
                 ExpectedConditions.presenceOfElementLocated(By.id("not-found-msg"))
             ));
         } catch (Exception e) {
-            // Se não encontrou nem formulário nem mensagem de erro, tenta aguardar mais
             System.out.println("[LOG] Aguardando carregamento do produto...");
             try {
                 Thread.sleep(2000);
@@ -58,26 +53,21 @@ public class ProdutoEditPage {
             }
         }
         
-        // Verifica se há mensagem de erro
         try {
             WebElement notFoundMsg = driver.findElement(By.id("not-found-msg"));
             if (notFoundMsg.isDisplayed() && !notFoundMsg.getText().isEmpty()) {
                 throw new RuntimeException("Produto não encontrado: " + notFoundMsg.getText());
             }
         } catch (org.openqa.selenium.NoSuchElementException e) {
-            // Não há mensagem de erro, continua
         }
         
-        // Aguarda que o formulário esteja visível
         wait.until(ExpectedConditions.visibilityOfElementLocated(editForm));
         
-        // Aguarda que todos os elementos estejam presentes e visíveis
         wait.until(ExpectedConditions.visibilityOfElementLocated(idInput));
         wait.until(ExpectedConditions.visibilityOfElementLocated(nomeInput));
         wait.until(ExpectedConditions.visibilityOfElementLocated(precoInput));
         wait.until(ExpectedConditions.visibilityOfElementLocated(estoqueInput));
 
-        // Aguarda que os elementos estejam clicáveis
         WebElement nomeEl = wait.until(ExpectedConditions.elementToBeClickable(nomeInput));
         nomeEl.clear();
         nomeEl.sendKeys(nome);

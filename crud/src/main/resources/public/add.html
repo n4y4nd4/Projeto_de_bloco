@@ -45,7 +45,6 @@
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // Limpa alerta anterior
         alertDiv.style.display = 'none';
         alertDiv.style.visibility = 'hidden';
         alertDiv.textContent = "";
@@ -54,8 +53,7 @@
         const precoValue = document.getElementById('preco').value;
         const estoqueValue = document.getElementById('estoque').value;
         
-        // Converte valores, permitindo que valores inválidos sejam enviados ao servidor para validação
-        // Remove validação client-side para permitir que o servidor valide e retorne mensagens específicas
+    
         let preco = null;
         if (precoValue !== '') {
             const parsed = parseFloat(precoValue);
